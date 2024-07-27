@@ -7,11 +7,9 @@
 import { Detail, Toast, getFrontmostApplication, showToast } from "@raycast/api";
 import fs from "node:fs";
 import path from "node:path";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 async function loadNote(): Promise<{ content: string; appName: string }> {
-  console.log("loadNote");
-
   try {
     const focusedApp = await getFrontmostApplication();
     const notesDirectory = path.join(process.env.HOME || "", "obscenities/orchis/macos/");
@@ -32,11 +30,11 @@ async function loadNote(): Promise<{ content: string; appName: string }> {
 }
 
 export default function Command() {
-  const [isLoading, setIsLoading] = React.useState(true);
-  const [markdown, setMarkdown] = React.useState<string>("Loading...");
-  const [navigationTitle, setNavigationTitle] = React.useState<string>("Loading");
+  const [isLoading, setIsLoading] = useState(true);
+  const [markdown, setMarkdown] = useState<string>();
+  const [navigationTitle, setNavigationTitle] = useState<string>();
 
-  React.useEffect(() => {
+  useEffect(() => {
     loadNote()
       .then(({ content, appName }) => {
         setMarkdown(content);
@@ -44,7 +42,6 @@ export default function Command() {
         setIsLoading(false);
       })
       .catch((error) => {
-        console.log("Error", error);
         showToast({
           style: Toast.Style.Failure,
           title: "Failed to open note",
