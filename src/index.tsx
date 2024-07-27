@@ -4,15 +4,20 @@
 //   return <Detail markdown="# Hello World" />;
 // }
 
-import { Detail, Toast, getFrontmostApplication, showToast } from "@raycast/api";
+import { Detail, Toast, getFrontmostApplication, showToast, getPreferenceValues } from "@raycast/api";
 import fs from "node:fs";
 import path from "node:path";
 import { useEffect, useState } from "react";
 
+interface Preferences {
+  notesDirectory: string;
+}
+
 async function loadNote(): Promise<{ content: string; appName: string }> {
   try {
     const focusedApp = await getFrontmostApplication();
-    const notesDirectory = path.join(process.env.HOME || "", "obscenities/orchis/macos/");
+    const preferences = getPreferenceValues<Preferences>();
+    const notesDirectory = preferences.notesDirectory.replace(/^~/, process.env.HOME || "");
     const notePath = path.join(notesDirectory, `${focusedApp.name}.md`);
 
     if (!fs.existsSync(notePath)) {
